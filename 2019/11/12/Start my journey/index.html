@@ -8,14 +8,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="description" content="HashMap的实现原理今天逛B站看到一个up主介绍了HashMap，就决定把学习HashMap作为第一篇博客的内容，不得不说第一次写博客，第一次使用markdown编辑器是真不习惯啊 HashMap设计基于的数据结构学习一个容器类要了解它是基于什么数据结构实现的，HashMap的底层数据结构是（数组+链表+红黑树），红黑树是Java8才引入的，把链表转为树结构，目的在于提高查找性能。当我们使用H">
 <meta property="og:type" content="article">
-<meta property="og:title" content="HashMap">
-<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;11&#x2F;15&#x2F;HashMap&#x2F;index.html">
+<meta property="og:title" content="学习HashMap的原理">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;11&#x2F;15&#x2F;%E5%AD%A6%E4%B9%A0HashMap%E7%9A%84%E5%8E%9F%E7%90%86&#x2F;index.html">
 <meta property="og:site_name" content="张晓杰的个人网站">
 <meta property="og:description" content="HashMap的实现原理今天逛B站看到一个up主介绍了HashMap，就决定把学习HashMap作为第一篇博客的内容，不得不说第一次写博客，第一次使用markdown编辑器是真不习惯啊 HashMap设计基于的数据结构学习一个容器类要了解它是基于什么数据结构实现的，HashMap的底层数据结构是（数组+链表+红黑树），红黑树是Java8才引入的，把链表转为树结构，目的在于提高查找性能。当我们使用H">
 <meta property="og:locale" content="en">
 <meta property="og:image" content="https:&#x2F;&#x2F;images2017.cnblogs.com&#x2F;blog&#x2F;810457&#x2F;201708&#x2F;810457-20170819203449787-1732855499.png">
-<meta property="og:image" content="https:&#x2F;&#x2F;pandao.github.io&#x2F;editor.md&#x2F;images&#x2F;logos&#x2F;editormd-logo-180x180.png">
-<meta property="og:updated_time" content="2019-11-15T08:28:07.609Z">
+<meta property="og:updated_time" content="2019-11-15T09:44:46.405Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https:&#x2F;&#x2F;images2017.cnblogs.com&#x2F;blog&#x2F;810457&#x2F;201708&#x2F;810457-20170819203449787-1732855499.png">
 
@@ -151,19 +150,19 @@
     <nav id="title-list-nav">
         
         <a  class=""
-           href="/2019/11/15/HashMap/"
-           data-tag=""
-           data-author="" >
-            <span class="post-title" title="HashMap">HashMap</span>
-            <span class="post-date" title="2019-11-15 00:15:33">2019/11/15</span>
-        </a>
-        
-        <a  class=""
            href="/2019/11/12/Start%20my%20journey/"
            data-tag=""
            data-author="" >
             <span class="post-title" title="Start my journey">Start my journey</span>
             <span class="post-date" title="2019-11-12 00:42:34">2019/11/12</span>
+        </a>
+        
+        <a  class=""
+           href="/2019/11/15/%E5%AD%A6%E4%B9%A0HashMap%E7%9A%84%E5%8E%9F%E7%90%86/"
+           data-tag=""
+           data-author="" >
+            <span class="post-title" title="学习HashMap的原理">学习HashMap的原理</span>
+            <span class="post-date" title="2019-11-15 00:15:33">2019/11/15</span>
         </a>
         
     </nav>
