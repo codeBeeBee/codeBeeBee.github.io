@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>HashMap | 张晓杰的个人网站</title>
+  <meta name="keywords" content="">
+  <meta name="description" content="HashMap | 张晓杰的个人网站">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="description" content="HashMap的实现原理今天逛B站看到一个up主介绍了HashMap，就决定把学习HashMap作为第一篇博客的内容，不得不说第一次写博客，第一次使用markdown编辑器是真不习惯啊 HashMap设计基于的数据结构学习一个容器类要了解它是基于什么数据结构实现的，HashMap的底层数据结构是（数组+链表+红黑树），红黑树是Java8才引入的，把链表转为树结构，目的在于提高查找性能。当我们使用H">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HashMap">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;11&#x2F;15&#x2F;HashMap&#x2F;index.html">
+<meta property="og:site_name" content="张晓杰的个人网站">
+<meta property="og:description" content="HashMap的实现原理今天逛B站看到一个up主介绍了HashMap，就决定把学习HashMap作为第一篇博客的内容，不得不说第一次写博客，第一次使用markdown编辑器是真不习惯啊 HashMap设计基于的数据结构学习一个容器类要了解它是基于什么数据结构实现的，HashMap的底层数据结构是（数组+链表+红黑树），红黑树是Java8才引入的，把链表转为树结构，目的在于提高查找性能。当我们使用H">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https:&#x2F;&#x2F;images2017.cnblogs.com&#x2F;blog&#x2F;810457&#x2F;201708&#x2F;810457-20170819203449787-1732855499.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;pandao.github.io&#x2F;editor.md&#x2F;images&#x2F;logos&#x2F;editormd-logo-180x180.png">
+<meta property="og:updated_time" content="2019-11-15T08:28:07.609Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;images2017.cnblogs.com&#x2F;blog&#x2F;810457&#x2F;201708&#x2F;810457-20170819203449787-1732855499.png">
+
+
+<link rel="icon" href="/img/yellowme.jpg">
+
+<link href="/css/style.css?v=1.0.1" rel="stylesheet">
+
+<link href="/css/hl_theme/atom-light.css?v=1.0.1" rel="stylesheet">
+
+<link href="//cdn.bootcss.com/animate.css/3.5.2/animate.min.css" rel="stylesheet">
+<link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="/js/jquery.autocomplete.min.js?v=1.0.1" ></script>
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<script>
+    hljs.initHighlightingOnLoad();
+</script>
+
+<script src="//cdn.bootcss.com/nprogress/0.2.0/nprogress.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.min.js" ></script>
+
+<script src="/js/iconfont.js?v=1.0.1" ></script>
+
+</head>
+<div style="display: none">
+  <input class="theme_disqus_on" value="false">
+  <input class="theme_preload_comment" value="false">
+  <input class="theme_blog_path" value="">
+</div>
+
+<body>
+<aside class="nav">
+    <div class="nav-left">
+        <a href="/" class="avatar_target">
+    <img class="avatar" src="/img/yellowme.jpg" />
+</a>
+<div class="author">
+    <span>codeBeeBee</span>
+</div>
+
+<div class="icon">
+    
+        
+        <a title="github" href="https://github.com/codebeebee" target="_blank">
+            
+                <svg class="iconfont-svg" aria-hidden="true">
+                    <use xlink:href="#icon-github"></use>
+                </svg>
+            
+        </a>
+        
+    
+        
+        <a title="email" href="mailto:916829028@qq.com" target="_blank">
+            
+                <svg class="iconfont-svg" aria-hidden="true">
+                    <use xlink:href="#icon-email"></use>
+                </svg>
+            
+        </a>
+        
+    
+        
+        <a title="qq" href="http://wpa.qq.com/msgrd?v=3&uin=916829028&site=qq&menu=yes" target="_blank">
+            
+                <svg class="iconfont-svg" aria-hidden="true">
+                    <use xlink:href="#icon-qq"></use>
+                </svg>
+            
+        </a>
+        
+    
+</div>
+
+
+
+
+<ul>
+    <li><div class="all active">全部文章<small>(2)</small></div></li>
+    
+</ul>
+<div class="left-bottom">
+    <div class="menus">
+    
+    
+    
+    
+    </div>
+    <div></div>
+</div>
+<input type="hidden" id="yelog_site_posts_number" value="2">
+
+<div style="display: none">
+    <span id="busuanzi_value_site_uv"></span>
+    <span id="busuanzi_value_site_pv"></span>
+</div>
+
+    </div>
+    <div class="nav-right">
+        <div class="friends-area">
+    <div class="friends-title">
+        友情链接
+        <i class="back-title-list"></i>
+    </div>
+    <div class="friends-content">
+        <ul>
+            
+        </ul>
+    </div>
+</div>
+        <div class="title-list">
+    <form onkeydown="if(event.keyCode==13){return false;}">
+        <input class="search" type="text" placeholder="Search..." autocomplete="off"id="local-search-input" >
+        <i class="cross"></i>
+        <span>
+            <label for="tagswitch">Tags:</label>
+            <input id="tagswitch" type="checkbox" style="display: none" />
+            <i id="tagsWitchIcon"></i>
+        </span>
+    </form>
+    <div class="tags-list">
+    
+    <div class="clearfix"></div>
+</div>
+
+    
+    <nav id="title-list-nav">
+        
+        <a  class=""
+           href="/2019/11/15/HashMap/"
+           data-tag=""
+           data-author="" >
+            <span class="post-title" title="HashMap">HashMap</span>
+            <span class="post-date" title="2019-11-15 00:15:33">2019/11/15</span>
+        </a>
+        
+        <a  class=""
+           href="/2019/11/12/Start%20my%20journey/"
+           data-tag=""
+           data-author="" >
+            <span class="post-title" title="Start my journey">Start my journey</span>
+            <span class="post-date" title="2019-11-12 00:42:34">2019/11/12</span>
+        </a>
+        
+    </nav>
+</div>
+    </div>
+    <div class="hide-list">
+        <div class="semicircle">
+            <div class="brackets first"><</div>
+            <div class="brackets">&gt;</div>
+        </div>
+    </div>
+</aside>
+<div class="post">
+    <div class="pjax">
+        <article id="post-HashMap" class="article article-type-post" itemscope itemprop="blogPost">
+    
+        <h1 class="article-title">HashMap</h1>
+    
+    <div class="article-meta">
+        
+        
+        
+        
+    </div>
+    <div class="article-meta">
+        
+        创建时间:<time class="date" title='更新时间: 2019-11-15 16:28:07'>2019-11-15 00:15</time>
+        
+    </div>
+    <div class="article-meta">
+        
+        
+        
+    </div>
+    
+    <div class="toc-ref">
+    
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#HashMap的实现原理"><span class="toc-text">HashMap的实现原理</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#HashMap设计基于的数据结构"><span class="toc-text">HashMap设计基于的数据结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如何实现存取元素"><span class="toc-text">如何实现存取元素</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#为何初始容量要是2的指数次幂"><span class="toc-text">为何初始容量要是2的指数次幂</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#resize扩容机制及链表转红黑树"><span class="toc-text">resize扩容机制及链表转红黑树</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#那为什么加载因子是0-75呢？"><span class="toc-text">那为什么加载因子是0.75呢？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#HashMap扩容死锁与环链形成分析"><span class="toc-text">HashMap扩容死锁与环链形成分析</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Java8-链表转红黑树-扩容不再需要rehash"><span class="toc-text">Java8 [链表转红黑树]    [扩容不再需要rehash]</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#首先了解为什么需要这样一个数据结构的转换"><span class="toc-text">首先了解为什么需要这样一个数据结构的转换</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#链表转红黑树的目的知道了，那链表什么时候转红黑树呢"><span class="toc-text">链表转红黑树的目的知道了，那链表什么时候转红黑树呢</span></a></li></ol></li></ol></li></ol></li></ol>
+    
+<style>
+    .left-col .switch-btn,
+    .left-col .switch-area {
+        display: none;
+    }
+    .toc-level-3 i,
+    .toc-level-3 ol {
+        display: none !important;
+    }
+</style>
+</div>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="HashMap的实现原理"><a href="#HashMap的实现原理" class="headerlink" title="HashMap的实现原理"></a>HashMap的实现原理</h1><p><strong>今天逛B站看到一个up主介绍了HashMap，就决定把学习HashMap作为第一篇博客的内容，不得不说第一次写博客，第一次使用markdown编辑器是真不习惯啊</strong></p>
+<h2 id="HashMap设计基于的数据结构"><a href="#HashMap设计基于的数据结构" class="headerlink" title="HashMap设计基于的数据结构"></a>HashMap设计基于的数据结构</h2><p>学习一个容器类要了解它是基于什么数据结构实现的，HashMap的底层数据结构是（数组+链表+红黑树），红黑树是Java8才引入的，把链表转为树结构，目的在于提高查找性能。<br><img src="https://images2017.cnblogs.com/blog/810457/201708/810457-20170819203449787-1732855499.png" alt=""><br>当我们使用HashMap，使用构造方法创建了这样一个集合容器，从代码可以看到创建这样的容器需要两个参数，一个是数组初始长度，一个是加载因子，默认的数组大小为16，默认的加载因子大小为0.75</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HashMap hashMap = <span class="keyword">new</span> HashMap(<span class="keyword">int</span> initialCapacity, <span class="keyword">float</span> loadFactor);</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">HashMap</span><span class="params">(<span class="keyword">int</span> initialCapacity, <span class="keyword">float</span> loadFactor)</span> </span>&#123;</span><br><span class="line"><span class="comment">//省略</span></span><br><span class="line">        <span class="keyword">this</span>.loadFactor = loadFactor;</span><br><span class="line">        <span class="keyword">this</span>.threshold = tableSizeFor(initialCapacity);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> DEFAULT_INITIAL_CAPACITY = <span class="number">1</span> &lt;&lt; <span class="number">4</span>; <span class="comment">// aka 16</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">float</span> DEFAULT_LOAD_FACTOR = <span class="number">0.75f</span>;</span><br></pre></td></tr></table></figure>
+<h2 id="如何实现存取元素"><a href="#如何实现存取元素" class="headerlink" title="如何实现存取元素"></a>如何实现存取元素</h2><p>存到HashMap的元素必须是实现了Object类的hashCode（）方法，用来计算元素对应的哈希值，即一个较长的数字字符串，之后对字符串取模可以定位元素在数组的位置（事实上也不是直接通过取模运算，而是用位运算，达到跟取模运算等价的效果，详细后面描述）。当调用元素的put()方法把元素存到容器的时候，首先判断数组是否初始化。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (table == EMPTY_TABLE) &#123;</span><br><span class="line">    inflateTable(threshold);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>之后判断元素的key是否为空，如果为空，返回0，代表数组的第一个位置</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (key == <span class="keyword">null</span>)</span><br><span class="line">      <span class="keyword">return</span> putForNullKey(value);</span><br></pre></td></tr></table></figure>
+<p>否则，调用hash方法，计算出key对应的数组位置，如果数组上有没有元素直接放入，如果有元素并且是不同的元素，就是出现了哈希冲突，采用链表的形式存储数据，新来的数据插入链表头（JDK1.7采用头插法）。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> i = indexFor(hash, table.length);</span><br><span class="line"><span class="keyword">for</span> (Entry&lt;K,V&gt; e = table[i]; e != <span class="keyword">null</span>; e = e.next)</span><br></pre></td></tr></table></figure>
+<p>读取数据其实也是通过这样的原理定位数组位置，取出数据。</p>
+<h2 id="为何初始容量要是2的指数次幂"><a href="#为何初始容量要是2的指数次幂" class="headerlink" title="为何初始容量要是2的指数次幂"></a>为何初始容量要是2的指数次幂</h2><p>可以看到要求容量必须是2的指数次幂，即使输入非2的指数次幂数也会内部转换，比如13转16</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * The table, resized as necessary. Length MUST Always be a power of two.</span></span><br><span class="line"><span class="comment"> */</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> capacity = roundUpToPowerOf2(toSize);</span><br></pre></td></tr></table></figure>
+<p>####至于为什么要求非得是2的指数次幂<br>先看看是如何定位数组位置的。首先是调用元素的hashcode方法得到对象的数字字符串，得到字符串后不是通过取模操作，而是利用位运算，起到等价于取模运算的效果，也能得到数组下标位置。通过（字符串）与（数组长度-1）做与运算，类似于0101001111010101的一串数字与00000001111111做运算,可以得到【0，数组长度-1】的数组下标。<br>为什么要用位运算代替取模运算呢？因为位运算的效率比取模运算高得多，一次hash效果可能不是特别明显，但是在后面的数组扩容，大量的元素都需要重hash,效果就非常明显了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">indexFor</span><span class="params">(<span class="keyword">int</span> h, <span class="keyword">int</span> length)</span> </span>&#123;</span><br><span class="line"><span class="comment">// assert Integer.bitCount(length) == 1 : "length must be a non-zero power of 2";</span></span><br><span class="line">        <span class="keyword">return</span> h &amp; (length-<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>现在就知道为什么初始数组长度是2的指数次幂了，原因在于要得到【0，数组长度-1】一个范围的数字，所以需要数字字符串与00000011111这样格式的数字做与运算，因此return h &amp; (length-1)就能完成取模运算的功能了。<br>并且每次扩容，数组长度为原来的2倍，也是为了保证数组长度为2的指数次幂。</p>
+<h2 id="resize扩容机制及链表转红黑树"><a href="#resize扩容机制及链表转红黑树" class="headerlink" title="resize扩容机制及链表转红黑树"></a>resize扩容机制及链表转红黑树</h2><p>可以看到每次新扩容的长度为原来的2倍，扩容的时机是，当数组长度*加载因子个桶存有数据时，就扩容。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">addEntry</span><span class="params">(<span class="keyword">int</span> hash, K key, V value, <span class="keyword">int</span> bucketIndex)</span> </span>&#123;</span><br><span class="line">      <span class="comment">//省略   </span></span><br><span class="line">resize(<span class="number">2</span> * table.length);</span><br><span class="line"><span class="comment">//省略   </span></span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<h4 id="那为什么加载因子是0-75呢？"><a href="#那为什么加载因子是0-75呢？" class="headerlink" title="那为什么加载因子是0.75呢？"></a>那为什么加载因子是0.75呢？</h4><p>首先加载因子的范围在0-1之间，假设加载因子为1，意思就是数组所有的桶装满数据才扩容。但是填数据的过程中，哈希冲突是无法避免的，因此会出现很多数据存在同一个桶的情况；假设加载因为为0.5，扩容更早，哈希冲突减少了，但是需要分配的存储空间变多了。因此，加载因子大小的选择，实际上是为了平衡查找性能与内存空间。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;p&gt;As a general rule, <span class="function">the <span class="keyword">default</span> load <span class="title">factor</span> <span class="params">(<span class="number">.75</span>)</span> offers a good tradeoff</span></span><br><span class="line"><span class="function"> * between time and space costs.  Higher values decrease the space overhead</span></span><br><span class="line"><span class="function"> * but increase the lookup cost.</span></span><br></pre></td></tr></table></figure>
+<p>从源码可以看到，扩容实际上是new了一个长度更大的数组,然后把所有元素转移到新的数组上面</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Entry[] newTable = <span class="keyword">new</span> Entry[newCapacity];</span><br><span class="line">transfer(newTable, initHashSeedAsNeeded(newCapacity));</span><br></pre></td></tr></table></figure>
+<p>Java7，所有元素需要重新hash,非常麻烦，而且rehash采用头插法，在多线程环境下可能会出现很大问题（死锁，后面讲）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (rehash) &#123;</span><br><span class="line">    e.hash = <span class="keyword">null</span> == e.key ? <span class="number">0</span> : hash(e.key);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="HashMap扩容死锁与环链形成分析"><a href="#HashMap扩容死锁与环链形成分析" class="headerlink" title="HashMap扩容死锁与环链形成分析"></a>HashMap扩容死锁与环链形成分析</h4><p>因为HashMap不是线程安全的，所以出现数据丢失是很容联想到的事情，但是因为JDK1.7插入数据采用的是头插法，会出现死锁，形成原因大概就是多个线程在扩容的时候，移动元素的位置，不同的元素互相用NEXT指针去指向对方，形成环结构，造成遍历时候死锁。</p>
+<h2 id="Java8-链表转红黑树-扩容不再需要rehash"><a href="#Java8-链表转红黑树-扩容不再需要rehash" class="headerlink" title="Java8 [链表转红黑树]    [扩容不再需要rehash]"></a>Java8 [链表转红黑树]    [扩容不再需要rehash]</h2><h4 id="首先了解为什么需要这样一个数据结构的转换"><a href="#首先了解为什么需要这样一个数据结构的转换" class="headerlink" title="首先了解为什么需要这样一个数据结构的转换"></a>首先了解为什么需要这样一个数据结构的转换</h4><p>显然，HashMap这样一个结构存储数据并不是唯一的目的，还有尽快从容器里面查找数据的需求，定位到数组后发现还需要到一个长度较长的链表里面遍历数据，效率低下，而如果是直接从一棵红黑树去查找数据，时间复杂度从O（n）变为对数级别。</p>
+<h4 id="链表转红黑树的目的知道了，那链表什么时候转红黑树呢"><a href="#链表转红黑树的目的知道了，那链表什么时候转红黑树呢" class="headerlink" title="链表转红黑树的目的知道了，那链表什么时候转红黑树呢"></a>链表转红黑树的目的知道了，那链表什么时候转红黑树呢</h4><p>之前在各种博客上看到的都是链表长度=8就转，但今天看了部分源码似乎也不全是这样的</p>
+<p><img src="https://pandao.github.io/editor.md/images/logos/editormd-logo-180x180.png" alt="Pandao editor.md" title="Pandao editor.md"></p>
+
+      
+       
+    </div>
+</article>
+
+
+
+
+
+
+
+    
+
+
+
+
+    </div>
+    <div class="copyright">
+        <p class="footer-entry">©2019 CodeBeeBee</p>
+<p class="footer-entry">Built with <a href="https://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/yelog/hexo-theme-3-hexo" target="_blank">3-hexo</a> theme</p>
+
+    </div>
+    <div class="full-toc">
+        <button class="full"><span class="min "></span></button>
+<button class="post-toc-menu"><span class="post-toc-menu-icons"></span></button>
+<div class="post-toc"><span class="post-toc-title">目录</span>
+    <div class="post-toc-content">
+
+    </div>
+</div>
+<a class="" id="rocket" ></a>
+
+    </div>
+</div>
+<div class="acParent"></div>
+
+</body>
+<script src="/js/jquery.pjax.js?v=1.0.1" ></script>
+
+<script src="/js/script.js?v=1.0.1" ></script>
+<script>
+    var img_resize = 'default';
+    /*作者、标签的自动补全*/
+    $(function () {
+        $('.search').AutoComplete({
+            'data': [],
+            'itemHeight': 20,
+            'width': 418
+        }).AutoComplete('show');
+    })
+    function initArticle() {
+        /*渲染对应的表格样式*/
+        
+            $(".post .pjax table").addClass("green_title");
+        
+
+        /*渲染打赏样式*/
+        
+
+        /*高亮代码块行号*/
+        
+        $('pre code').each(function(){
+            var lines = $(this).text().split('\n').length - 1, widther='';
+            if (lines>99) {
+                widther = 'widther'
+            }
+            var $numbering = $('<ul/>').addClass('pre-numbering ' + widther).attr("unselectable","on");
+            $(this).addClass('has-numbering ' + widther)
+                    .parent()
+                    .append($numbering);
+            for(var i=1;i<=lines;i++){
+                $numbering.append($('<li/>').text(i));
+            }
+        });
+        
+
+        /*访问数量*/
+        
+
+        /*代码高亮，行号对齐*/
+        $('.pre-numbering').css('line-height',$('.has-numbering').css('line-height'));
+
+        
+        
+    }
+
+    /*打赏页面隐藏与展示*/
+    
+
+</script>
+
+<!--加入行号的高亮代码块样式-->
+
+<style>
+    pre{
+        position: relative;
+        margin-bottom: 24px;
+        border-radius: 10px;
+        border: 1px solid #e2dede;
+        background: #FFF;
+        overflow: hidden;
+    }
+    code.has-numbering{
+        margin-left: 30px;
+    }
+    code.has-numbering.widther{
+        margin-left: 35px;
+    }
+    .pre-numbering{
+        margin: 0px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 20px;
+        padding: 0.5em 3px 0.7em 5px;
+        border-right: 1px solid #C3CCD0;
+        text-align: right;
+        color: #AAA;
+        background-color: #fafafa;
+    }
+    .pre-numbering.widther {
+        width: 35px;
+    }
+</style>
+
+<!--自定义样式设置-->
+<style>
+    
+    
+    .nav {
+        width: 542px;
+    }
+    .nav.fullscreen {
+        margin-left: -542px;
+    }
+    .nav-left {
+        width: 120px;
+    }
+    
+    
+    @media screen and (max-width: 1468px) {
+        .nav {
+            width: 492px;
+        }
+        .nav.fullscreen {
+            margin-left: -492px;
+        }
+        .nav-left {
+            width: 100px;
+        }
+    }
+    
+    
+    @media screen and (max-width: 1024px) {
+        .nav {
+            width: 492px;
+            margin-left: -492px
+        }
+        .nav.fullscreen {
+            margin-left: 0;
+        }
+        .nav .hide-list.fullscreen {
+            left: 492px
+        }
+    }
+    
+    @media screen and (max-width: 426px) {
+        .nav {
+            width: 100%;
+        }
+        .nav-left {
+            width: 100%;
+        }
+    }
+    
+    
+    .nav-right .title-list nav a .post-title, .nav-right .title-list #local-search-result a .post-title {
+        color: #383636;
+    }
+    
+    
+    .nav-right .title-list nav a .post-date, .nav-right .title-list #local-search-result a .post-date {
+        color: #5e5e5f;
+    }
+    
+    
+    .nav-right nav a.hover, #local-search-result a.hover{
+        background-color: #e2e0e0;
+    }
+    
+    
+
+    /*列表样式*/
+    
+    .post .pjax article .article-entry>ol, .post .pjax article .article-entry>ul, .post .pjax article>ol, .post .pjax article>ul{
+        border: #e2dede solid 1px;
+        border-radius: 10px;
+        padding: 10px 32px 10px 56px;
+    }
+    .post .pjax article .article-entry li>ol, .post .pjax article .article-entry li>ul,.post .pjax article li>ol, .post .pjax article li>ul{
+        padding-top: 5px;
+        padding-bottom: 5px;
+    }
+    .post .pjax article .article-entry>ol>li, .post .pjax article .article-entry>ul>li,.post .pjax article>ol>li, .post .pjax article>ul>li{
+        margin-bottom: auto;
+        margin-left: auto;
+    }
+    .post .pjax article .article-entry li>ol>li, .post .pjax article .article-entry li>ul>li,.post .pjax article li>ol>li, .post .pjax article li>ul>li{
+        margin-bottom: auto;
+        margin-left: auto;
+    }
+    
+
+    /* 背景图样式 */
+    
+    
+
+
+    /*引用块样式*/
+    
+
+    /*文章列表背景图*/
+    
+    .nav-right:before {
+        content: ' ';
+        display: block;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0.3;
+        background: url("https://i.loli.net/2019/07/22/5d3521411f3f169375.png");
+        background-repeat: no-repeat;
+        background-position: 50% 0;
+        -ms-background-size: cover;
+        -o-background-size: cover;
+        -moz-background-size: cover;
+        -webkit-background-size: cover;
+        background-size: cover;
+    }
+    
+
+    
+</style>
+
+
+
+
+
+
+
+</html>
